@@ -216,9 +216,37 @@ void free_list(list_t l)
 
 list_t swap_with_head(cell_t * c, list_t l)
 {
+	if (l.head)
+	{
+		int tranfer = c->val;
+		c->val = l.head->val;
+		l.head->val = tranfer;
 
-	/* mettre ici votre code */
-	
+		return l;
+	}
+
+	return l;
+}
+
+list_t swap_with_tail(cell_t* c, list_t l)
+{
+	if (l.head)
+	{
+		cell_t* ptr = l.head;
+
+		while (ptr->suivant)
+		{
+			ptr = ptr->suivant;
+		}
+
+		int tranfer = c->val;
+		c->val = ptr->val;
+		ptr->val = tranfer;
+
+		return l;
+	}
+
+	return l;
 }
 
 
@@ -236,13 +264,13 @@ cell_t * min_of_list(list_t l)
 	if (l.head)
 	{
 		int min = l.head->val;
+		ptrmin = l.head;
 		ptr = l.head;
 
 		while (ptr)
 		{
 			if (ptr->val < min)
 			{
-				printf("\n TEST %d \n",ptr->val);
 				min = ptr->val;
 				ptrmin = ptr;
 			}
@@ -281,8 +309,25 @@ cell_t * max_of_list(list_t l)
 
 list_t selection_sort(list_t l)
 {
+	if (l.head)
+	{
+		list_t buffer;
+		buffer.head = min_of_list(l);
 
-	/* mettre ici votre code */
+		cell_t* ptr = l.head;
+
+		while (ptr)
+		{
+			swap_with_head(min_of_list(l), l);
+
+			l.head = ptr->suivant;
+
+			ptr = ptr->suivant;
+			
+		}
+
+		return buffer;
+	}
 }
 
 /********************
@@ -318,14 +363,21 @@ int main(){
 	*/
 
 	///Phase 2 :
-	list_t liste = create_list(5);
+	list_t liste = create_list(10);
 
 	cell_t* min = min_of_list(liste);
 	cell_t* max = max_of_list(liste);
 
 	affiche_list(liste);
 
-	printf("\n MIN : %d \n MAX : %d \n", min->val, max->val);
+	//printf("\n MIN : %d \n MAX : %d \n", min->val, max->val);
+
+	//liste = swap_with_head(min, liste);
+	//liste = swap_with_tail(max, liste);
+
+	selection_sort(liste);
+
+	affiche_list(liste);
 
 	free_list(liste);
 	liste.head = NULL; ///Mettre vers un pointeur NULL
