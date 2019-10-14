@@ -29,6 +29,9 @@ implantation en C !
 
 #define MAX_VAL 50
 
+#define false 0
+#define true 1
+
 
 /*
 Structure de données liste chaînée.
@@ -330,6 +333,113 @@ list_t selection_sort(list_t l)
 	}
 }
 
+list_t quick_sort(list_t l)
+{
+	if (l.head)
+	{
+		int taille = 0;
+		cell_t* ptr = l.head;
+
+		while (ptr)
+		{
+			ptr = ptr->suivant;
+			taille++;
+		}
+
+		int pivot = rand() % (taille);
+		ptr = l.head;
+
+		printf("\n VAL PIVOT : %d : \n", pivot);
+	}
+}
+
+/*
+	Bataille
+*/
+
+cell_t* recup_index(int rand, list_t l)
+{
+	cell_t* ptr = NULL;
+
+	ptr = l.head;
+
+	for (int i = 0; i < rand; i++)
+	{
+		ptr = ptr->suivant;
+	}
+
+	return ptr;
+}
+
+list_t generer_paquet()
+{
+	int i = 51;
+	list_t* liste = (list_t*)malloc(sizeof(list_t));
+	liste->head = NULL;
+
+	for (i; i >= 0; i--)
+	{
+		liste->head = insert_in_head(i, *liste).head;
+	}
+
+	return *liste;
+}
+
+list_t melanger_paquet(list_t l)
+{
+	cell_t* ptr = l.head;
+
+	while (ptr)
+	{
+		l = swap_with_head(recup_index(rand() % 52, l), l);
+		
+		ptr = ptr->suivant;
+	}
+
+	return l;
+}
+
+list_t couper_paquet(list_t l)
+{;
+	list_t l2;
+
+	cell_t* ptr = NULL;
+
+	l2.head = recup_index(25, l);
+
+	ptr = recup_index(24, l);
+
+	ptr->suivant = NULL;
+
+	return l2;
+}
+
+void jouer_coups(list_t l1, list_t l2)
+{
+	cell_t* ptr1 = l1.head;
+	cell_t* ptr2 = l2.head;
+
+	if ((ptr1->val % 13) < (ptr2->val % 13))
+	{
+		printf(" \n JOUEUR 2 GAGNE LE COUP AVEC %d CONTRE %d \n", (ptr2->val % 13), (ptr1->val % 13));
+		insert_in_tail(l1.head, l2);
+		insert_in_tail(l2.head, l2);
+	}
+
+	else if ((ptr1->val % 13) > (ptr2->val % 13))
+	{
+		printf(" \n JOUEUR 1 GAGNE LE COUP AVEC %d CONTRE %d \n", (ptr1->val % 13), (ptr2->val % 13));
+		insert_in_tail(l1.head, l1);
+		insert_in_tail(l2.head, l1);
+	}
+
+	else
+	{
+		printf("BATAILLE !");
+	}
+}
+
+
 /********************
 
 		MAIN !!
@@ -362,7 +472,9 @@ int main(){
 	affiche_list(liste);
 	*/
 
-	///Phase 2 :
+	
+	///Phase 2 : Fonctionne
+	/*
 	list_t liste = create_list(10);
 
 	cell_t* min = min_of_list(liste);
@@ -383,6 +495,21 @@ int main(){
 	liste.head = NULL; ///Mettre vers un pointeur NULL
 
 	affiche_list(liste);
+	*/
+
+	///Phase 3 : Bataille ! (Non termine)
+	/**/
+	list_t paquet = generer_paquet();
+
+	paquet = melanger_paquet(paquet);
+
+	list_t paquet2 = couper_paquet(paquet);
+
+	affiche_list(paquet);
+
+	affiche_list(paquet2);
+
+	jouer_coups(paquet, paquet2);
 
 	printf("TERMINE - - - - -");
 
